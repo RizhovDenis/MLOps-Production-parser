@@ -5,17 +5,14 @@
 
 
 # useful for handling different item types with a single interface
-import os
-
 from itemadapter import ItemAdapter
+
+from database.db_sync import db_session
+from components.company.models import Company
 
 
 class CrawlerPipeline:
 
-    def __init__(self):
-        pass
-        # self.con = db_session
-
     def process_item(self, item, spider):
-        # Company.insert(item['name'])
+        Company.insert(item['name'], None)
         return item

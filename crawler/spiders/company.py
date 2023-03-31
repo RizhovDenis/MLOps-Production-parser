@@ -1,7 +1,6 @@
 import scrapy
 
-
-# from components.company.models import Company
+from crawler.items import CrawlerItem
 
 
 class ParseConfig:
@@ -21,8 +20,15 @@ class CompanySpider(scrapy.Spider):
         urls = marks.css('::attr(href)')
 
         for name, url in zip(names, urls):
-            # Company.insert(name=name)
-            yield {
-                'name': name.get(),
-                'url': ParseConfig.parsing_source + url.get()
-            }
+            yield response.follow(
+                ParseConfig.parsing_source + url.get(),
+                callback=self.parse,
+                cb_kwargs={'name': name.get()}
+            )
+
+    def parse_description(self, response, **kwargs):
+        crawler_item = CrawlerItem()
+        crawler_item['name'] = kwargs['name']
+        description = response.css('p.company-profile_profile-description__YWJVr')
+        crawler_item['description'] = description
+        yield

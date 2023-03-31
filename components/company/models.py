@@ -14,13 +14,19 @@ class Company(Base):
     description: str = sq.Column(sq.String)
 
     @classmethod
-    def insert(cls, name: str):
+    def insert(cls, name: str, description: str):
         db_session.execute(
-            text("""INSERT INTO companies (name)
-                    VALUES (:name)"""),
-            params={'name': name}
+            text("""INSERT INTO companies (name, description)
+                    VALUES (:name, :description)"""),
+            params={
+                'name': name,
+                'description': description
+            }
         )
 
         db_session.commit()
+
+
+
 
 

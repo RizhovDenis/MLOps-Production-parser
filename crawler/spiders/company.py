@@ -20,10 +20,14 @@ class CompanySpider(scrapy.Spider):
         urls = marks.css('::attr(href)')
 
         for name, url in zip(names, urls):
+            cur_url = ParseConfig.parsing_source + url.get()
             yield response.follow(
-                ParseConfig.parsing_source + url.get(),
-                callback=self.parse,
-                cb_kwargs={'name': name.get()}
+                cur_url,
+                callback=self.parse_description,
+                cb_kwargs={
+                    'name': name.get(),
+                    'cur_url': cur_url
+                }
             )
 
     def parse_description(self, response, **kwargs):
@@ -31,4 +35,12 @@ class CompanySpider(scrapy.Spider):
         crawler_item['name'] = kwargs['name']
         description = response.css('p.company-profile_profile-description__YWJVr')
         crawler_item['description'] = description
-        yield
+        kwargs = kwargs['cur_url'] + '-news'
+        yield response.follow(
+            kwargs['cur_url'],
+            callback=self.parse_news_urls,
+            cb_kwargs=kwargs
+        )
+
+    def parse_news_urls(self, response, **kwargs):
+        pass

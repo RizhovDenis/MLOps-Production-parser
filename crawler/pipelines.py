@@ -9,10 +9,23 @@ from itemadapter import ItemAdapter
 
 from database.db_sync import db_session
 from components.company.models import Company
-
+from components.news.models import News
 
 class CrawlerPipeline:
 
     def process_item(self, item, spider):
-        Company.insert(item['name'], None)
+        if item['name']:
+            Company.insert(
+                name=item['name'],
+                description=item['description'],
+                news_url=item['news_url']
+            )
+        else:
+            News.insert(
+                title=item['title'],
+                content=item['content'],
+                created_at=item['created_at'],
+                company_id=item['company_id']
+            )
+
         return item

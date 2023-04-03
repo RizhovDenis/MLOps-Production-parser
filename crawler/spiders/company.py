@@ -1,3 +1,5 @@
+import time
+
 import scrapy
 
 from crawler.items import CrawlerItem
@@ -26,21 +28,22 @@ class CompanySpider(scrapy.Spider):
                 callback=self.parse_description,
                 cb_kwargs={
                     'name': name.get(),
-                    'cur_url': cur_url
+                    'cur_url': cur_url.split('?')[0]
                 }
             )
 
     def parse_description(self, response, **kwargs):
+        time.sleep(1)
+        description = response.css('div.bg-background-surface p.text-xs::text').get()
+
         crawler_item = CrawlerItem()
         crawler_item['name'] = kwargs['name']
-        description = response.css('p.company-profile_profile-description__YWJVr')
         crawler_item['description'] = description
-        kwargs = kwargs['cur_url'] + '-news'
-        yield response.follow(
-            kwargs['cur_url'],
-            callback=self.parse_news_urls,
-            cb_kwargs=kwargs
-        )
+        crawler_item['news_url'] = kwargs['cur_url'] + '-news'
 
-    def parse_news_urls(self, response, **kwargs):
-        pass
+        crawler_item['post_title'] = None
+        crawler_item['created_at'] = None
+        crawler_item['content'] = None
+        crawler_item['company_id'] = None
+
+        yield crawler_item

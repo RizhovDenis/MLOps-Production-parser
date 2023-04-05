@@ -4,10 +4,7 @@ import scrapy
 
 from crawler.items import CrawlerItem
 
-
-class ParseConfig:
-
-    parsing_source: str = 'https://ru.investing.com'
+from settings import proj_conf
 
 
 class CompanySpider(scrapy.Spider):
@@ -22,7 +19,10 @@ class CompanySpider(scrapy.Spider):
         urls = marks.css('::attr(href)')
 
         for name, url in zip(names, urls):
-            cur_url = ParseConfig.parsing_source + url.get()
+            cur_url = proj_conf.parsing_source + url.get()
+            if '%' in cur_url:
+                cur_url = cur_url.split('%')[0]
+
             yield response.follow(
                 cur_url,
                 callback=self.parse_description,
@@ -45,5 +45,6 @@ class CompanySpider(scrapy.Spider):
         crawler_item['created_at'] = None
         crawler_item['content'] = None
         crawler_item['company_id'] = None
+        crawler_item['url'] = None
 
         yield crawler_item

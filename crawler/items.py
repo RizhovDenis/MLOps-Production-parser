@@ -15,4 +15,6 @@ class CrawlerItem(scrapy.Item):
     post_title = scrapy.Field()
     created_at = scrapy.Field()
     content = scrapy.Field()
+    url = scrapy.Field()
+
     company_id = scrapy.Field()

@@ -7,9 +7,10 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 
-from database.db_sync import db_session
 from components.company.models import Company
 from components.news.models import News
+from components.companies_news.models import CompanyNews
+
 
 class CrawlerPipeline:
 
@@ -20,12 +21,17 @@ class CrawlerPipeline:
                 description=item['description'],
                 news_url=item['news_url']
             )
-        else:
-            News.insert(
-                title=item['title'],
+        elif item['content']:
+            news = News.insert(
+                title=item['post_title'],
                 content=item['content'],
                 created_at=item['created_at'],
-                company_id=item['company_id']
+                url=item['url']
+            )
+
+            CompanyNews.insert(
+                company_id=item['company_id'],
+                news_id=news.id
             )
 
         return item

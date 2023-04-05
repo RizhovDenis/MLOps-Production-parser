@@ -20,6 +20,7 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 from components.company.models import *
 from components.news.models import *
+from components.companies_news.models import *
 
 target_metadata = Base.metadata
 

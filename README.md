@@ -12,5 +12,6 @@ alembic upgrade head
 ~~~
 ## Run project
 ~~~bash
-python setup.py
+python manager.py parse_companies
+python manager.py parse_news
 ~~~
